@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
-import dev._2lstudios.hamsterapi.Debug;
 import dev._2lstudios.hamsterapi.HamsterAPI;
 import dev._2lstudios.hamsterapi.Version;
 import dev._2lstudios.hamsterapi.enums.HamsterHandler;
@@ -151,7 +150,6 @@ public class HamsterPlayer {
 	// Disconnect the HamsterPlayer with packets
 	public void disconnect(final String reason) {
 		final Reflection reflection = hamsterAPI.getReflection();
-		final Server server = hamsterAPI.getServer();
 
 		try {
 			final Object chatKick = toChatBaseComponent.invoke(null, "{\"text\":\"" + reason + "\"}");
@@ -211,16 +209,12 @@ public class HamsterPlayer {
 		if (!setup) {
 			final Reflection reflection = hamsterAPI.getReflection();
 			final Object handle = player.getClass().getMethod("getHandle").invoke(player);
-			Debug.info("Invoked player getHandle (" + this.player.getName() + ")");
 
 			this.playerConnection = reflection.getField(handle, reflection.getPlayerConnection());
-			Debug.info("Getting playerConection field (" + this.player.getName() + ")");
 
 			this.networkManager = reflection.getField(playerConnection, reflection.getNetworkManager());
-			Debug.info("Getting networkManager field (" + this.player.getName() + ")");
 
 			this.channel = (Channel) reflection.getField(networkManager, Channel.class);
-			Debug.info("Getting Channel from networkManager field (" + this.player.getName() + ")");
 
 			this.iChatBaseComponentClass = reflection.getIChatBaseComponent();
 
@@ -228,7 +222,6 @@ public class HamsterPlayer {
 			this.sendPacketMethod = this.playerConnection.getClass().getMethod(
 				Version.getCurrentVersion().isMinor(v1_18) ? "sendPacket" : "a"
 			, reflection.getPacket());
-			Debug.info("Getting sendPacket method from playerConnection field (" + this.player.getName() + ")");
 
 			this.toChatBaseComponent = iChatBaseComponentClass.getDeclaredClasses()[0].getMethod("a", String.class);
 			this.setup = true;
@@ -242,7 +235,6 @@ public class HamsterPlayer {
 			setup();
 
 			if (!channel.isActive()) {
-				Debug.warn("Trying to inject a player with NIO channel closed (" + this.player.getName() + ")");
 				throw new ClosedChannelException();
 			}
 
@@ -252,21 +244,16 @@ public class HamsterPlayer {
 
 			if (pipeline.get("decompress") != null) {
 				pipeline.addAfter("decompress", HamsterHandler.HAMSTER_DECODER, hamsterDecoderHandler);
-				Debug.info("Added HAMSTER_DECODER in pipeline after decompress (" + this.player.getName() + ")");
 			} else if (pipeline.get("splitter") != null) {
 				pipeline.addAfter("splitter", HamsterHandler.HAMSTER_DECODER, hamsterDecoderHandler);
-				Debug.info("Added HAMSTER_DECODER in pipeline after spliter (" + this.player.getName() + ")");
 			} else {
-				Debug.crit("No ChannelHandler was found on the pipeline to inject HAMSTER_DECODER (" + this.player.getName() + ")");
 				throw new IllegalAccessException(
 						"No ChannelHandler was found on the pipeline to inject " + HamsterHandler.HAMSTER_DECODER);
 			}
 
 			if (pipeline.get("decoder") != null) {
 				pipeline.addAfter("decoder", HamsterHandler.HAMSTER_CHANNEL, hamsterChannelHandler);
-				Debug.info("Added HAMSTER_CHANNEL in pipeline after decoder (" + this.player.getName() + ")");
 			} else {
-				Debug.crit("No ChannelHandler was found on the pipeline to inject HAMSTER_CHANNEL (" + this.player.getName() + ")");
 				throw new IllegalAccessException(
 						"No ChannelHandler was found on the pipeline to inject " + hamsterChannelHandler);
 			}
@@ -282,10 +269,7 @@ public class HamsterPlayer {
 			inject();
 		} catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException
 				| ClosedChannelException e) {
-			if (Debug.isEnabled()) {
-				Debug.crit("Exception throwed while injecting:");
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 			return false;
 		}
 

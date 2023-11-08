@@ -67,16 +67,6 @@ public class HamsterAPI extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		this.saveDefaultConfig();
-
-		if (this.getConfig().getBoolean("debug")) {
-			Debug.init(this);
-
-			Debug.info("Debug mode is enabled in HamsterAPI (" + Version.getCurrentVersion().toString() + ")");
-			Debug.warn("It is recommended not to use this mode in production.");
-			Debug.crit("Debug mode can affect server performance while it is active.");
-		}
-
 		final Server server = getServer();
 		final PluginManager pluginManager = server.getPluginManager();
 
