@@ -2,7 +2,6 @@ package dev._2lstudios.hamsterapi.listeners;
 
 import java.util.logging.Logger;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,7 +28,7 @@ public class PlayerJoinListener implements Listener {
 
         if (!hamsterPlayer.tryInject()) {
             logger.warning("Failed to inject player " + player.getName()
-                    + " please contact 2LStudios for support about HamsterAPI as this can lead to vulnerabilities.");
+                    + " please contact ArkFlame Development for support about HamsterAPI as this can lead to vulnerabilities.");
         }
     }
 }
