@@ -52,16 +52,8 @@ public class Version {
         ;
     }
 
-    public boolean isMajor(String versionText) {
-        return this.isMajor(new Version(versionText));
-    }
-
     public boolean isMinor(Version version) {
         return version.isMajor(this);
-    }
-
-    public boolean isMinor(String versionText) {
-        return this.isMinor(new Version(versionText));
     }
 
     public String toString() {
