@@ -203,6 +203,8 @@ public class HamsterPlayer {
 		}
 	}
 
+	private final static Version v1_18 = new Version("1.18");
+
 	// Sets variables to simplify packet handling and inject
 	public void setup()
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
@@ -224,7 +226,7 @@ public class HamsterPlayer {
 
 			
 			this.sendPacketMethod = this.playerConnection.getClass().getMethod(
-				Version.getCurrentVersion().isMinor("1.18") ? "sendPacket" : "a"
+				Version.getCurrentVersion().isMinor(v1_18) ? "sendPacket" : "a"
 			, reflection.getPacket());
 			Debug.info("Getting sendPacket method from playerConnection field (" + this.player.getName() + ")");
 
