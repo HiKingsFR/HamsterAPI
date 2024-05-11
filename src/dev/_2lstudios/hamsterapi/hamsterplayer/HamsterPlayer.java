@@ -6,11 +6,9 @@ import java.lang.reflect.Method;
 import java.nio.channels.ClosedChannelException;
 import java.util.UUID;
 
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import dev._2lstudios.hamsterapi.HamsterAPI;
-import dev._2lstudios.hamsterapi.Version;
 import dev._2lstudios.hamsterapi.enums.HamsterHandler;
 import dev._2lstudios.hamsterapi.handlers.HamsterChannelHandler;
 import dev._2lstudios.hamsterapi.handlers.HamsterDecoderHandler;
@@ -201,8 +199,6 @@ public class HamsterPlayer {
 		}
 	}
 
-	private final static Version v1_18 = new Version("1.18");
-
 	// Sets variables to simplify packet handling and inject
 	public void setup()
 			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
@@ -218,10 +214,7 @@ public class HamsterPlayer {
 
 			this.iChatBaseComponentClass = reflection.getIChatBaseComponent();
 
-			
-			this.sendPacketMethod = this.playerConnection.getClass().getMethod(
-				Version.getCurrentVersion().isMinor(v1_18) ? "sendPacket" : "a"
-			, reflection.getPacket());
+			this.sendPacketMethod = this.playerConnection.getClass().getMethod("sendPacket", reflection.getPacket());
 
 			this.toChatBaseComponent = iChatBaseComponentClass.getDeclaredClasses()[0].getMethod("a", String.class);
 			this.setup = true;
