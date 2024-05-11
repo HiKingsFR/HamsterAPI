@@ -4,12 +4,10 @@ import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 
 import dev._2lstudios.hamsterapi.events.PacketReceiveEvent;
-import dev._2lstudios.hamsterapi.events.PacketSendEvent;
 import dev._2lstudios.hamsterapi.hamsterplayer.HamsterPlayer;
 import dev._2lstudios.hamsterapi.wrappers.PacketWrapper;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
 
 public class HamsterChannelHandler extends ChannelDuplexHandler {
 	private final Server server;
@@ -20,24 +18,6 @@ public class HamsterChannelHandler extends ChannelDuplexHandler {
 		this.server = hamsterPlayer.getPlayer().getServer();
 		this.pluginManager = server.getPluginManager();
 		this.hamsterPlayer = hamsterPlayer;
-	}
-
-	@Override
-	public void write(final ChannelHandlerContext channelHandlerContext, final Object packet,
-			final ChannelPromise channelPromise) throws Exception {
-		final PacketWrapper packetWrapper = new PacketWrapper(packet);
-		final boolean async = !server.isPrimaryThread();
-		final PacketSendEvent event = new PacketSendEvent(channelHandlerContext, hamsterPlayer, packetWrapper, async);
-
-		try {
-			this.pluginManager.callEvent(event);
-		} catch (final Exception exception) {
-			exception.printStackTrace();
-		}
-
-		if (!event.isCancelled()) {
-			super.write(channelHandlerContext, packetWrapper.getPacket(), channelPromise);
-		}
 	}
 
 	@Override
